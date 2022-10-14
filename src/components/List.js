@@ -61,19 +61,25 @@ const List = () => {
     const localJobs = () => {
       const jobsClone = JSON.parse(localStorage.getItem("jobs"));
       if (jobsClone) {
-        const newJob = jobsClone.jobs.map((item) => {
-          return {
-            id: item.id,
-            name: item.name,
-            priority: item.priority,
-          };
-        });
-        setSortJobs(newJob);
+        try {
+          // setJobs(jobsClone.jobs);
+          setSortJobs(jobsClone.jobs);
+        } catch (error) {
+          console.log(error);
+        }
+        // const newJob = jobsClone.jobs.map((item) => {
+        //   return {
+        //     id: item.id,
+        //     name: item.name,
+        //     priority: item.priority,
+        //   };
+        // });
+        // setSortJobs(newJob);
         // setJobs(newJob);
       }
     };
     localJobs();
-  }, [setJobs]);
+  }, [setJobs, jobs]);
 
   // sorting by priority
   useEffect(() => {

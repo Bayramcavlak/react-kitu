@@ -17,7 +17,7 @@ const Label = styled.label`
 
 export default function FormDialog() {
   useContext(MainContext);
-  const { dialogEdit, setDialogEdit, editJobs, jobs, priorityData } =
+  const { dialogEdit, setDialogEdit, editJobs, setJobs, jobs, priorityData } =
     useContext(MainContext);
   const [editPriorite, setEditPriorite] = useState([]);
   const inputSelect = useRef(null);
@@ -26,14 +26,27 @@ export default function FormDialog() {
     const getJobs = () => {
       const filter = jobs.filter((job) => job.id === editJobs);
       setEditPriorite(filter);
-      console.log(filter);
     };
     getJobs();
   }, [editJobs, jobs]);
 
   const handleApprove = () => {
-    console.log(inputSelect.current.value);
-    setDialogEdit(false);
+    const updateJobs = jobs.map((job) => {
+      if (job.id === editJobs) {
+        return {
+          ...job,
+          priority: Number(inputSelect.current.value),
+        };
+      }
+      return job;
+    });
+    localStorage.setItem("jobs", JSON.stringify(updateJobs));
+    try {
+      setJobs(updateJobs);
+      setDialogEdit(false);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleClose = () => {
@@ -64,6 +77,7 @@ export default function FormDialog() {
                 name="priority"
                 className={inputs.select}
                 value={editPriorite[0]?.priority}
+                onChange={(e) => setEditPriorite(e.target.value)}
               >
                 {priorityData.map((item) => (
                   <option key={item.id} value={item.id}>
@@ -76,7 +90,7 @@ export default function FormDialog() {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose}>Cancel</Button>
-          <Button onClick={handleApprove}>Approval</Button>
+          <Button onClick={handleApprove}>Save</Button>
         </DialogActions>
       </Dialog>
     </div>
